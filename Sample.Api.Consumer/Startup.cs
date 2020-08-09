@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sample.Api.Consumer.Counter;
 using System;
 using System.Net.Http;
 
@@ -18,7 +19,8 @@ namespace Sample.Api.Consumer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScheduler();
-            services.AddTransient<HttpClientJobScheduler>();
+            services.AddTransient<HttpClientFactoryJobScheduler>();
+            services.AddSingleton<ICounter, CounterService>();
             services.AddTransient<HttpClient>();
             services.AddHttpClient("schedulingJob", c =>
             {
@@ -33,7 +35,7 @@ namespace Sample.Api.Consumer
             // Commenting below configuration on temporary basis
             app.ApplicationServices.UseScheduler(scheduler =>
             {
-                scheduler.Schedule<HttpClientJobScheduler>().EveryTenSeconds();
+                scheduler.Schedule<HttpClientFactoryJobScheduler>().EveryFiveSeconds();
             });
 
             
